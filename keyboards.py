@@ -15,7 +15,7 @@ class Keyboards():
         #Клавиатуры для Шахтера
         self.miner_menu = telebot.types.ReplyKeyboardMarkup(True)
         self.miner_menu.row('Копать ⛏', 'Улучшения ⬆', 'Баланс 💰')
-        self.miner_menu.row('Магазин 🛒', 'Банк 🏦')
+        self.miner_menu.row('Магазин 🛒', 'Банк 🏦', 'Топ')
         self.miner_menu.row('Инфо ℹ', 'Достижения 🎖')
         self.miner_menu.row('Назад 🔙')
 

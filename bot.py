@@ -24,7 +24,9 @@ try:
 
     #Таймер
     def timer():
-        global time2
+        global time2, top
+        top_list = []
+
         for i in Users:
             if not(i == '0'):
                 if Users[i].stamina < Users[i].stamina_max:
@@ -32,9 +34,25 @@ try:
                     if Users[i].stamina == Users[i].stamina_max:
                         bot.send_message(int(i), 'Твоя выносливость полностью востановилась', reply_markup = keyboards.main)
                 Users[i].income()
+
+                if Users[i].username == None:
+                    top_list.append((i, Users[i].balance, 'None'))
+                else:
+                    top_list.append((i, Users[i].balance, Users[i].username))
+
+        top_list.sort(key=lambda i: i[1], reverse=True)
+
+        top = []
+        number = 1
+        for i in top_list:
+            top.append((number, i[2], i[1]))
+            number += 1
                 
         file = open('Users.data', 'wb')
         pickle.dump(Users, file)
+        file.close()
+        file = open('top.data', 'wb')
+        pickle.dump(top, file)
         file.close()
         time2 = int(time.time())          
         time1 = Timer(60 * 1, timer) 
@@ -43,6 +61,10 @@ try:
     #Загрузка "бд"
     file = open('Users.data', 'rb')
     Users = pickle.load(file)
+    file.close()
+
+    file = open('top.data', 'rb')
+    top = pickle.load(file)
     file.close()
 
     time1 = Timer(60 * 1, timer)
@@ -346,7 +368,16 @@ try:
                 diamond_pickaxe.close()               
         elif message.text == 'Улучшения ⬆':
             bot.send_message(message.chat.id, 'Давай что-нибудь улучшим', reply_markup = keyboards.upgrade)
-            Users[str(message.chat.id)].current_keyboard = 'upgrade'        
+            Users[str(message.chat.id)].current_keyboard = 'upgrade'    
+        elif message.text == 'Топ':
+            top_text = ''
+            count = 1
+            for i in top:
+                top_text += '{:2}. {:15}:{:10}\n'.format(i[0], i[1], i[2])
+                if count == 10:
+                    break
+                count += 1
+            bot.send_message(message.chat.id, top_text)
         elif message.text == 'Кирка':
              bot.send_message(message.chat.id, 'Давай улучшим твою кирку', reply_markup = keyboards.pickaxes)
              Users[str(message.chat.id)].current_keyboard = 'pickaxes'
